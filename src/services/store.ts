@@ -8,47 +8,32 @@ import {
   userOrdersReducer
 } from '@slices';
 
-import { socketMiddleware } from './middleware/socket-middleware';
-import {
-  WS_CONNECTION_START,
-  WS_CONNECTION_SUCCESS,
-  WS_CONNECTION_ERROR,
-  WS_CONNECTION_CLOSED,
-  WS_GET_MESSAGE,
-  WS_CONNECTION_CLOSE,
-  WS_USER_CONNECTION_START,
-  WS_USER_CONNECTION_SUCCESS,
-  WS_USER_CONNECTION_ERROR,
-  WS_USER_CONNECTION_CLOSED,
-  WS_USER_GET_MESSAGE,
-  WS_USER_CONNECTION_CLOSE
-} from './constants/ws-constants';
-
 import {
   TypedUseSelectorHook,
   useDispatch as dispatchHook,
   useSelector as selectorHook
 } from 'react-redux';
 
+import { socketMiddleware } from './middleware/socket-middleware';
+
 const wsMiddleware = socketMiddleware({
-  wsConnect: WS_CONNECTION_START,
-  wsDisconnect: WS_CONNECTION_CLOSE,
-  onOpen: WS_CONNECTION_SUCCESS,
-  onClose: WS_CONNECTION_CLOSED,
-  onError: WS_CONNECTION_ERROR,
-  onMessage: WS_GET_MESSAGE
+  wsConnect: 'feed/wsConnectionStart',
+  wsDisconnect: 'feed/wsConnectionClose',
+  onOpen: 'feed/wsConnectionSuccess',
+  onClose: 'feed/wsConnectionClosed',
+  onError: 'feed/wsConnectionError',
+  onMessage: 'feed/wsGetMessage'
 });
 
 const wsUserMiddleware = socketMiddleware({
-  wsConnect: WS_USER_CONNECTION_START,
-  wsDisconnect: WS_USER_CONNECTION_CLOSE,
-  onOpen: WS_USER_CONNECTION_SUCCESS,
-  onClose: WS_USER_CONNECTION_CLOSED,
-  onError: WS_USER_CONNECTION_ERROR,
-  onMessage: WS_USER_GET_MESSAGE
+  wsConnect: 'userOrders/wsUserConnectionStart',
+  wsDisconnect: 'userOrders/wsUserConnectionClose',
+  onOpen: 'userOrders/wsUserConnectionSuccess',
+  onClose: 'userOrders/wsUserConnectionClosed',
+  onError: 'userOrders/wsUserConnectionError',
+  onMessage: 'userOrders/wsUserGetMessage'
 });
 
-// Здесь combineReducers для простоты дальнейшей типизации RootState
 const rootReducer = combineReducers({
   ingredients: ingredientsReducer,
   burgerConstructor: constructorReducer,

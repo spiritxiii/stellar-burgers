@@ -21,26 +21,23 @@ export const socketMiddleware =
       const { wsConnect, wsDisconnect, onOpen, onClose, onError, onMessage } =
         wsActions;
 
-      console.log('🔍 Middleware received action:', type);
-
       if (type === wsConnect) {
-        console.log('🔌 WebSocket connecting to:', payload);
-        socket = new WebSocket(payload);
-      }
+        try {
+          socket = new WebSocket(payload);
+        } catch (error) {
+          dispatch({ type: onError, payload: 'WebSocket creation failed' });
+          return;
+        }
 
-      if (socket) {
         socket.onopen = (event) => {
-          console.log('✅ WebSocket connected');
           dispatch({ type: onOpen, payload: event });
         };
 
         socket.onclose = (event) => {
-          console.log('❌ WebSocket disconnected');
           dispatch({ type: onClose, payload: event });
         };
 
         socket.onerror = (event) => {
-          console.log('🚨 WebSocket error');
           dispatch({ type: onError, payload: 'WebSocket connection error' });
         };
 
@@ -48,7 +45,6 @@ export const socketMiddleware =
           const { data } = event;
           try {
             const parsedData = JSON.parse(data);
-            console.log('📨 WebSocket message received');
             dispatch({ type: onMessage, payload: parsedData });
           } catch (error) {
             console.error('Error parsing WebSocket message:', error);
@@ -57,7 +53,6 @@ export const socketMiddleware =
       }
 
       if (type === wsDisconnect && socket) {
-        console.log('🔌 WebSocket disconnecting');
         socket.close();
         socket = null;
       }

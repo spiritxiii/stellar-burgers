@@ -1,35 +1,69 @@
-import { FC, useEffect } from 'react';
-import { useDispatch, useSelector } from '../../services/store';
-import { wsUserConnectionStart, wsUserConnectionClose } from '@slices';
-import { getCookie } from '../../utils/cookie';
-import { getFeedOrders, getFeedWsConnected } from '@selectors';
+import { FC, useEffect, useState } from 'react';
 import { Preloader } from '@ui';
 import { ProfileOrdersUI } from '@ui-pages';
+import { TOrder } from '@utils-types';
 
 export const ProfileOrders: FC = () => {
-  const dispatch = useDispatch();
-  const orders = useSelector(getFeedOrders);
-  const wsConnected = useSelector(getFeedWsConnected);
+  const [orders, setOrders] = useState<TOrder[]>([]);
+
+  const mockOrders: TOrder[] = [
+    {
+      _id: 'user1',
+      ingredients: [
+        '60d3b41abdacab0026a733c6',
+        '60d3b41abdacab0026a733c8',
+        '60d3b41abdacab0026a733cc'
+      ],
+      status: 'done',
+      name: 'Space флюоресцентный бургер',
+      createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+      updatedAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+      number: 23456
+    },
+    {
+      _id: 'user2',
+      ingredients: [
+        '60d3b41abdacab0026a733c7',
+        '60d3b41abdacab0026a733d4',
+        '60d3b41abdacab0026a733d3'
+      ],
+      status: 'done',
+      name: 'Краторный метеоритный бургер',
+      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+      updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+      number: 23455
+    },
+    {
+      _id: 'user3',
+      ingredients: [
+        '60d3b41abdacab0026a733c6',
+        '60d3b41abdacab0026a733d0',
+        '60d3b41abdacab0026a733d1'
+      ],
+      status: 'pending',
+      name: 'Минеральный астероидный бургер',
+      createdAt: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
+      updatedAt: new Date(Date.now() - 1000 * 60 * 10).toISOString(),
+      number: 23458
+    }
+  ];
 
   useEffect(() => {
-    const accessToken = getCookie('accessToken');
-    if (accessToken) {
-      const token = accessToken.replace('Bearer ', '');
-      dispatch(
-        wsUserConnectionStart(
-          `wss://norma.nomoreparties.space/orders?token=${token}`
-        )
-      );
-    }
+    setOrders(mockOrders);
+  }, []);
 
-    return () => {
-      dispatch(wsUserConnectionClose());
-    };
-  }, [dispatch]);
-
-  if (!wsConnected || orders.length === 0) {
-    return <Preloader />;
-  }
-
-  return <ProfileOrdersUI orders={orders} />;
+  return (
+    <>
+      <div
+        style={{
+          background: '#1C1C21',
+          padding: '10px 20px',
+          textAlign: 'center',
+          color: '#8585AD',
+          borderBottom: '1px solid #2F2F37'
+        }}
+      />
+      <ProfileOrdersUI orders={orders} />
+    </>
+  );
 };
