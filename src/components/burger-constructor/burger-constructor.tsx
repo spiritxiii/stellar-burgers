@@ -60,6 +60,7 @@ export const BurgerConstructor: FC = () => {
 
   const handleCloseOrderModal = () => {
     dispatch(closeOrderModal());
+
     if (orderModalData) {
       dispatch(clearConstructor());
     }

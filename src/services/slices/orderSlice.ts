@@ -18,9 +18,13 @@ const initialState: TOrderState = {
 
 export const createOrder = createAsyncThunk(
   'order/create',
-  async (ingredientIds: string[]) => {
-    const response = await orderBurgerApi(ingredientIds);
-    return response.order;
+  async (ingredientIds: string[], { rejectWithValue }) => {
+    try {
+      const response = await orderBurgerApi(ingredientIds);
+      return response.order;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Ошибка оформления заказа');
+    }
   }
 );
 
@@ -50,7 +54,8 @@ const orderSlice = createSlice({
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.orderRequest = false;
-        state.error = action.error.message || 'Ошибка оформления заказа';
+        state.error = action.payload as string;
+        state.orderModalData = null;
       });
   }
 });
