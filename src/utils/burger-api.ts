@@ -221,6 +221,9 @@ export const updateUserApi = (user: Partial<TRegisterData>) =>
       authorization: getCookie('accessToken')
     } as HeadersInit,
     body: JSON.stringify(user)
+  }).then((data) => {
+    if (data?.success) return data;
+    return Promise.reject(data);
   });
 
 export const logoutApi = () =>

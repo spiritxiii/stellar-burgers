@@ -1,33 +1,40 @@
 import { FC, useMemo } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
+import { useSelector } from '../../services/store';
+import { getIngredients } from '@selectors';
 import { TIngredient } from '@utils-types';
+import { useParams } from 'react-router-dom';
 
 export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+  const { number } = useParams<{ number: string }>();
+  const ingredients = useSelector(getIngredients);
 
-  const ingredients: TIngredient[] = [];
+  // моковые данные для тестирования
+  const mockOrderData = useMemo(() => {
+    if (!ingredients.length) return null;
 
-  /* Готовим данные для отображения */
+    return {
+      _id: 'mock_id',
+      status: 'done',
+      name: 'Mock Burger',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      number: number ? parseInt(number) : 12345,
+      ingredients: ingredients.slice(0, 5).map((ing) => ing._id) // Берем первые 5 ингредиентов
+    };
+  }, [ingredients, number]);
+
   const orderInfo = useMemo(() => {
-    if (!orderData || !ingredients.length) return null;
+    if (!mockOrderData || !ingredients.length) return null;
 
-    const date = new Date(orderData.createdAt);
+    const date = new Date(mockOrderData.createdAt);
 
     type TIngredientsWithCount = {
       [key: string]: TIngredient & { count: number };
     };
 
-    const ingredientsInfo = orderData.ingredients.reduce(
+    const ingredientsInfo = mockOrderData.ingredients.reduce(
       (acc: TIngredientsWithCount, item) => {
         if (!acc[item]) {
           const ingredient = ingredients.find((ing) => ing._id === item);
@@ -52,12 +59,12 @@ export const OrderInfo: FC = () => {
     );
 
     return {
-      ...orderData,
+      ...mockOrderData,
       ingredientsInfo,
       date,
       total
     };
-  }, [orderData, ingredients]);
+  }, [mockOrderData, ingredients]);
 
   if (!orderInfo) {
     return <Preloader />;

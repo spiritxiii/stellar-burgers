@@ -1,15 +1,37 @@
+import { FC, useEffect } from 'react';
+import { useDispatch, useSelector } from '../../services/store';
+import { wsConnectionStart, wsConnectionClose } from '@slices';
+import { getFeedOrders, getFeedWsConnected } from '@selectors';
 import { Preloader } from '@ui';
 import { FeedUI } from '@ui-pages';
-import { TOrder } from '@utils-types';
-import { FC } from 'react';
 
 export const Feed: FC = () => {
-  /** TODO: взять переменную из стора */
-  const orders: TOrder[] = [];
+  const dispatch = useDispatch();
+  const orders = useSelector(getFeedOrders);
+  const wsConnected = useSelector(getFeedWsConnected);
 
-  if (!orders.length) {
+  useEffect(() => {
+    console.log('🚀 Feed mounted, dispatching wsConnectionStart');
+    dispatch(wsConnectionStart('wss://norma.nomoreparties.space/orders/all'));
+
+    return () => {
+      console.log('🧹 Feed unmounted, dispatching wsConnectionClose');
+      dispatch(wsConnectionClose());
+    };
+  }, [dispatch]);
+
+  const handleGetFeeds = () => {
+    console.log('🔄 Manual refresh requested');
+    if (!wsConnected) {
+      dispatch(wsConnectionStart('wss://norma.nomoreparties.space/orders/all'));
+    }
+  };
+
+  console.log('📊 Feed state:', { wsConnected, ordersCount: orders.length });
+
+  if (!wsConnected) {
     return <Preloader />;
   }
 
-  <FeedUI orders={orders} handleGetFeeds={() => {}} />;
+  return <FeedUI orders={orders} handleGetFeeds={handleGetFeeds} />;
 };
