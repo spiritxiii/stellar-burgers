@@ -46,8 +46,12 @@ export const fetchWithRefresh = async <T>(
   try {
     const res = await fetch(url, options);
     return await checkResponse<T>(res);
-  } catch (err: any) {
-    if (err.message === 'jwt expired' || err.message === 'Token is invalid') {
+  } catch (err: unknown) {
+    const error = err as { message?: string };
+    if (
+      error.message === 'jwt expired' ||
+      error.message === 'Token is invalid'
+    ) {
       const refreshData = await refreshToken();
 
       if (options.headers) {
@@ -180,7 +184,7 @@ export const loginUserApi = (data: TLoginData): Promise<TAuthResponse> =>
 
 export const forgotPasswordApi = (data: {
   email: string;
-}): Promise<TServerResponse<{}>> =>
+}): Promise<TServerResponse<object>> =>
   fetch(`${URL}/password-reset`, {
     method: 'POST',
     headers: {
@@ -188,7 +192,7 @@ export const forgotPasswordApi = (data: {
     },
     body: JSON.stringify(data)
   })
-    .then((res) => checkResponse<TServerResponse<{}>>(res))
+    .then((res) => checkResponse<TServerResponse<object>>(res))
     .then((data) => {
       if (data?.success) return data;
       return Promise.reject(data);
@@ -197,7 +201,7 @@ export const forgotPasswordApi = (data: {
 export const resetPasswordApi = (data: {
   password: string;
   token: string;
-}): Promise<TServerResponse<{}>> =>
+}): Promise<TServerResponse<object>> =>
   fetch(`${URL}/password-reset/reset`, {
     method: 'POST',
     headers: {
@@ -205,7 +209,7 @@ export const resetPasswordApi = (data: {
     },
     body: JSON.stringify(data)
   })
-    .then((res) => checkResponse<TServerResponse<{}>>(res))
+    .then((res) => checkResponse<TServerResponse<object>>(res))
     .then((data) => {
       if (data?.success) return data;
       return Promise.reject(data);
@@ -235,7 +239,7 @@ export const updateUserApi = (
     return Promise.reject(data);
   });
 
-export const logoutApi = (): Promise<TServerResponse<{}>> =>
+export const logoutApi = (): Promise<TServerResponse<object>> =>
   fetch(`${URL}/auth/logout`, {
     method: 'POST',
     headers: {
@@ -244,4 +248,4 @@ export const logoutApi = (): Promise<TServerResponse<{}>> =>
     body: JSON.stringify({
       token: localStorage.getItem('refreshToken')
     })
-  }).then((res) => checkResponse<TServerResponse<{}>>(res));
+  }).then((res) => checkResponse<TServerResponse<object>>(res));

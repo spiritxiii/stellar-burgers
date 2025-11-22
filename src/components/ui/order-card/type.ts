@@ -7,7 +7,7 @@ export type OrderCardUIProps = {
   locationState: { background: Location };
 };
 
-type TOrderInfo = {
+export type TOrderInfo = {
   ingredientsInfo: TIngredient[];
   ingredientsToShow: TIngredient[];
   remains: number;

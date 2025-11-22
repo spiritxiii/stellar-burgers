@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { orderBurgerApi } from '@api';
 import { TOrder } from '@utils-types';
 
@@ -22,8 +22,9 @@ export const createOrder = createAsyncThunk(
     try {
       const response = await orderBurgerApi(ingredientIds);
       return response.order;
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Ошибка оформления заказа');
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      return rejectWithValue(err.message || 'Ошибка оформления заказа');
     }
   }
 );
@@ -51,6 +52,7 @@ const orderSlice = createSlice({
         state.orderRequest = false;
         state.order = action.payload;
         state.orderModalData = action.payload;
+        // Заказ успешно создан - конструктор будет очищен через side effect
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.orderRequest = false;

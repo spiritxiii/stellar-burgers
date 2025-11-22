@@ -23,25 +23,42 @@ const initialState: TUserState = {
   error: null
 };
 
-const getErrorMessage = (error: any): string => {
-  if (error?.success === false && error?.message) {
-    return error.message;
-  }
+type TApiError = {
+  success?: boolean;
+  message?: string;
+  status?: number;
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+};
+
+const getErrorMessage = (error: TApiError | string | unknown): string => {
   if (typeof error === 'string') {
     return error;
   }
-  if (error?.message) {
-    return error.message;
+
+  if (error && typeof error === 'object') {
+    const err = error as TApiError;
+
+    if (err.success === false && err.message) {
+      return err.message;
+    }
+    if (err.message) {
+      return err.message;
+    }
+    if (err.response?.data?.message) {
+      return err.response.data.message;
+    }
+    if (err.status === 403) {
+      return 'Доступ запрещен. Проверьте авторизацию.';
+    }
+    if (err.status === 401) {
+      return 'Неверные учетные данные.';
+    }
   }
-  if (error?.response?.data?.message) {
-    return error.response.data.message;
-  }
-  if (error?.status === 403) {
-    return 'Доступ запрещен. Проверьте авторизацию.';
-  }
-  if (error?.status === 401) {
-    return 'Неверные учетные данные.';
-  }
+
   return 'Произошла ошибка при выполнении запроса';
 };
 
@@ -56,7 +73,7 @@ export const registerUser = createAsyncThunk(
       setCookie('accessToken', response.accessToken);
       localStorage.setItem('refreshToken', response.refreshToken);
       return response.user;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(getErrorMessage(error));
     }
   }
@@ -70,7 +87,7 @@ export const loginUser = createAsyncThunk(
       setCookie('accessToken', response.accessToken);
       localStorage.setItem('refreshToken', response.refreshToken);
       return response.user;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(getErrorMessage(error));
     }
   }
@@ -83,7 +100,7 @@ export const logoutUser = createAsyncThunk(
       await logoutApi();
       deleteCookie('accessToken');
       localStorage.removeItem('refreshToken');
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(getErrorMessage(error));
     }
   }
@@ -99,7 +116,7 @@ export const checkUserAuth = createAsyncThunk(
       }
       const response = await getUserApi();
       return response.user;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(getErrorMessage(error));
     }
   }
@@ -114,7 +131,7 @@ export const updateUser = createAsyncThunk(
     try {
       const response = await updateUserApi(data);
       return response.user;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(getErrorMessage(error));
     }
   }

@@ -1,4 +1,10 @@
-import { Middleware } from 'redux';
+import {
+  Middleware,
+  MiddlewareAPI,
+  Dispatch,
+  Action,
+  UnknownAction
+} from 'redux';
 
 export type TWsActionTypes = {
   wsConnect: string;
@@ -10,43 +16,48 @@ export type TWsActionTypes = {
   onMessage: string;
 };
 
-export const socketMiddleware =
-  (wsActions: TWsActionTypes): Middleware =>
-  (store) => {
+type TWsAction = Action & {
+  payload?: string;
+};
+
+export const socketMiddleware = (
+  wsActions: TWsActionTypes
+): Middleware<{}, any, Dispatch<UnknownAction>> =>
+  ((store: MiddlewareAPI<Dispatch<UnknownAction>, any>) => {
     let socket: WebSocket | null = null;
 
-    return (next) => (action) => {
+    return (next: Dispatch<UnknownAction>) => (action: UnknownAction) => {
       const { dispatch } = store;
-      const { type, payload } = action as any;
+      const { type, payload } = action as TWsAction;
       const { wsConnect, wsDisconnect, onOpen, onClose, onError, onMessage } =
         wsActions;
 
       if (type === wsConnect) {
         try {
-          socket = new WebSocket(payload);
-        } catch (error) {
+          socket = new WebSocket(payload as string);
+        } catch (error: unknown) {
           dispatch({ type: onError, payload: 'WebSocket creation failed' });
           return;
         }
 
-        socket.onopen = (event) => {
+        socket.onopen = (event: Event) => {
           dispatch({ type: onOpen, payload: event });
         };
 
-        socket.onclose = (event) => {
+        socket.onclose = (event: CloseEvent) => {
           dispatch({ type: onClose, payload: event });
         };
 
-        socket.onerror = (event) => {
+        socket.onerror = (event: Event) => {
           dispatch({ type: onError, payload: 'WebSocket connection error' });
         };
 
-        socket.onmessage = (event) => {
+        socket.onmessage = (event: MessageEvent) => {
           const { data } = event;
           try {
             const parsedData = JSON.parse(data);
             dispatch({ type: onMessage, payload: parsedData });
-          } catch (error) {
+          } catch (error: unknown) {
             console.error('Error parsing WebSocket message:', error);
           }
         };
@@ -59,4 +70,4 @@ export const socketMiddleware =
 
       next(action);
     };
-  };
+  }) as Middleware;

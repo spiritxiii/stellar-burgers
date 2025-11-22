@@ -11,6 +11,10 @@ const initialState: TConstructorState = {
   ingredients: []
 };
 
+// Функция для генерации уникального ID (вынес из редьюсера)
+const generateIngredientId = (ingredient: TIngredient): string =>
+  `${ingredient._id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
 const constructorSlice = createSlice({
   name: 'constructor',
   initialState,
@@ -18,12 +22,14 @@ const constructorSlice = createSlice({
     addBun: (state, action: PayloadAction<TIngredient>) => {
       state.bun = action.payload;
     },
-    addIngredient: (state, action: PayloadAction<TIngredient>) => {
-      const newIngredient: TConstructorIngredient = {
-        ...action.payload,
-        id: `${action.payload._id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-      };
-      state.ingredients.push(newIngredient);
+    addIngredient: {
+      reducer: (state, action: PayloadAction<TConstructorIngredient>) => {
+        state.ingredients.push(action.payload);
+      },
+      prepare: (ingredient: TIngredient) => {
+        const id = generateIngredientId(ingredient);
+        return { payload: { ...ingredient, id } };
+      }
     },
     removeIngredient: (state, action: PayloadAction<string>) => {
       state.ingredients = state.ingredients.filter(

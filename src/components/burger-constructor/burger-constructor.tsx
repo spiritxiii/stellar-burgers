@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { useDrop } from 'react-dnd';
 import { useSelector, useDispatch } from '../../services/store';
 import { useNavigate } from 'react-router-dom';
@@ -41,6 +41,12 @@ export const BurgerConstructor: FC = () => {
     }
   });
 
+  useEffect(() => {
+    if (orderModalData && !orderRequest) {
+      dispatch(clearConstructor());
+    }
+  }, [orderModalData, orderRequest, dispatch]);
+
   const onOrderClick = () => {
     if (!constructorItems.bun || orderRequest) return;
 
@@ -60,10 +66,7 @@ export const BurgerConstructor: FC = () => {
 
   const handleCloseOrderModal = () => {
     dispatch(closeOrderModal());
-
-    if (orderModalData) {
-      dispatch(clearConstructor());
-    }
+    // Теперь очистка конструктора идет через useEffect
   };
 
   return (

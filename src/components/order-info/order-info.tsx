@@ -1,40 +1,60 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useEffect } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
-import { useSelector } from '../../services/store';
+import { useSelector, useDispatch } from '../../services/store';
 import { getIngredients } from '@selectors';
 import { TIngredient } from '@utils-types';
 import { useParams } from 'react-router-dom';
+import { fetchIngredients } from '@slices';
 
 export const OrderInfo: FC = () => {
   const { number } = useParams<{ number: string }>();
   const ingredients = useSelector(getIngredients);
+  const dispatch = useDispatch();
 
-  // моковые данные для тестирования
-  const mockOrderData = useMemo(() => {
-    if (!ingredients.length) return null;
+  useEffect(() => {
+    if (ingredients.length === 0) {
+      dispatch(fetchIngredients());
+    }
+  }, [dispatch, ingredients.length]);
 
-    return {
-      _id: 'mock_id',
-      status: 'done',
-      name: 'Mock Burger',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      number: number ? parseInt(number) : 12345,
-      ingredients: ingredients.slice(0, 5).map((ing) => ing._id) // Берем первые 5 ингредиентов
-    };
-  }, [ingredients, number]);
+  // Есть проблемы с запросом к API для получения данных заказа
+  // WebSocket connection to '<URL>' failed: WebSocket is closed before the connection is established.
+  // В коде с:
+  // const wsUrl = 'wss://norma.education-services.ru/orders/all';
+  //     dispatch(wsConnectionStart(wsUrl));
+  // const orderData = useSelector(getOrderByNumber(number));
 
+  // Временные данные для демонстрации
   const orderInfo = useMemo(() => {
-    if (!mockOrderData || !ingredients.length) return null;
+    if (!ingredients.length || !number) return null;
 
-    const date = new Date(mockOrderData.createdAt);
+    const orderNumber = parseInt(number);
+
+    const status = orderNumber % 2 === 0 ? 'done' : 'pending';
+
+    // Выбираем случайные ингредиенты для заказа
+    const bun = ingredients.find((ing) => ing.type === 'bun');
+    const mains = ingredients.filter((ing) => ing.type === 'main').slice(0, 2);
+    const sauces = ingredients
+      .filter((ing) => ing.type === 'sauce')
+      .slice(0, 1);
+
+    const selectedIngredients = [bun, ...mains, ...sauces].filter(
+      Boolean
+    ) as TIngredient[];
+
+    const orderIngredients = [
+      selectedIngredients[0]?._id,
+      ...selectedIngredients.slice(1).map((ing) => ing._id),
+      selectedIngredients[0]?._id
+    ].filter(Boolean);
 
     type TIngredientsWithCount = {
       [key: string]: TIngredient & { count: number };
     };
 
-    const ingredientsInfo = mockOrderData.ingredients.reduce(
+    const ingredientsInfo = orderIngredients.reduce(
       (acc: TIngredientsWithCount, item) => {
         if (!acc[item]) {
           const ingredient = ingredients.find((ing) => ing._id === item);
@@ -47,7 +67,6 @@ export const OrderInfo: FC = () => {
         } else {
           acc[item].count++;
         }
-
         return acc;
       },
       {}
@@ -58,13 +77,23 @@ export const OrderInfo: FC = () => {
       0
     );
 
+    const bunName = bun ? bun.name.replace('булка', '').trim() : 'Космический';
+    const mainNames = mains.map((main) => main.name.split(' ')[0]).join(', ');
+    const burgerName = `${bunName} бургер${mains.length > 0 ? ` с ${mainNames}` : ''}`;
+
     return {
-      ...mockOrderData,
+      _id: `order_${number}`,
+      status,
+      name: burgerName,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      number: orderNumber,
+      ingredients: orderIngredients,
       ingredientsInfo,
-      date,
-      total
+      total,
+      date: new Date()
     };
-  }, [mockOrderData, ingredients]);
+  }, [ingredients, number]);
 
   if (!orderInfo) {
     return <Preloader />;
