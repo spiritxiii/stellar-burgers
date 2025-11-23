@@ -41,8 +41,10 @@ export const BurgerConstructor: FC = () => {
     }
   });
 
+  // Эффект для очистки конструктора при успешном создании заказа
   useEffect(() => {
     if (orderModalData && !orderRequest) {
+      // Заказ успешно создан, очищаем конструктор
       dispatch(clearConstructor());
     }
   }, [orderModalData, orderRequest, dispatch]);
@@ -66,7 +68,6 @@ export const BurgerConstructor: FC = () => {
 
   const handleCloseOrderModal = () => {
     dispatch(closeOrderModal());
-    // Теперь очистка конструктора идет через useEffect
   };
 
   return (

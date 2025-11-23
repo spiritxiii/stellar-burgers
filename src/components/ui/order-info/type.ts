@@ -17,5 +17,4 @@ export type TOrderInfo = {
   updatedAt: string;
   number: number;
   ingredients: string[];
-  statusText?: string;
 };

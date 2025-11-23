@@ -1,10 +1,5 @@
-import {
-  Middleware,
-  MiddlewareAPI,
-  Dispatch,
-  Action,
-  UnknownAction
-} from 'redux';
+import { Middleware, MiddlewareAPI, Dispatch, UnknownAction } from 'redux';
+import { RootState } from '../store';
 
 export type TWsActionTypes = {
   wsConnect: string;
@@ -16,19 +11,15 @@ export type TWsActionTypes = {
   onMessage: string;
 };
 
-type TWsAction = Action & {
-  payload?: string;
-};
-
 export const socketMiddleware = (
   wsActions: TWsActionTypes
-): Middleware<{}, any, Dispatch<UnknownAction>> =>
-  ((store: MiddlewareAPI<Dispatch<UnknownAction>, any>) => {
+): Middleware<{}, RootState, Dispatch<UnknownAction>> =>
+  ((store: MiddlewareAPI<Dispatch<UnknownAction>, RootState>) => {
     let socket: WebSocket | null = null;
 
     return (next: Dispatch<UnknownAction>) => (action: UnknownAction) => {
       const { dispatch } = store;
-      const { type, payload } = action as TWsAction;
+      const { type, payload } = action as { type: string; payload?: unknown };
       const { wsConnect, wsDisconnect, onOpen, onClose, onError, onMessage } =
         wsActions;
 

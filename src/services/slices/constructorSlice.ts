@@ -11,7 +11,7 @@ const initialState: TConstructorState = {
   ingredients: []
 };
 
-// Функция для генерации уникального ID (вынес из редьюсера)
+// Функция для генерации уникального ID (вынесена из редьюсера)
 const generateIngredientId = (ingredient: TIngredient): string =>
   `${ingredient._id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 

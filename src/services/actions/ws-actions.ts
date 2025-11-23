@@ -39,7 +39,7 @@ export const wsGetMessage = (message: TOrdersData) => ({
   payload: message
 });
 
-export const wsSendMessage = (message: any) => ({
+export const wsSendMessage = (message: TOrdersData) => ({
   type: WS_SEND_MESSAGE,
   payload: message
 });
@@ -71,7 +71,7 @@ export const wsUserGetMessage = (message: TOrdersData) => ({
   payload: message
 });
 
-export const wsUserSendMessage = (message: any) => ({
+export const wsUserSendMessage = (message: TOrdersData) => ({
   type: WS_USER_SEND_MESSAGE,
   payload: message
 });
