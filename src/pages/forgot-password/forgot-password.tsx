@@ -19,7 +19,7 @@ export const ForgotPassword: FC = () => {
         localStorage.setItem('resetPassword', 'true');
         navigate('/reset-password', { replace: true });
       })
-      .catch((err) => setError(err));
+      .catch((err: Error) => setError(err));
   };
 
   return (

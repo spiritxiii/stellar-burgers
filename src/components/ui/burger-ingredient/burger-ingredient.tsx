@@ -19,6 +19,7 @@ export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
         <Link
           className={styles.article}
           to={`/ingredients/${_id}`}
+          // state={{ backgroundLocation: locationState }}
           state={locationState}
         >
           {count && <Counter count={count} />}
