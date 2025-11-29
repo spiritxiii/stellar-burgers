@@ -38,9 +38,7 @@ const ingredientsSlice = createSlice({
       })
       .addCase(fetchIngredients.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.error.message ||
-          'Ошибка при попытке получить список ингридиентов';
+        state.error = 'Ошибка при попытке получить список ингридиентов';
       });
   }
 });
