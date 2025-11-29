@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.33% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>45/54</span>
+                <span class='fraction'>54/54</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.33% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>45/54</span>
+                <span class='fraction'>54/54</span>
             </div>
         
             
@@ -140,21 +140,21 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -193,25 +193,25 @@ const userOrdersSlice = createSlice({
   name: 'userOrders',
   initialState,
   reducers: {
-    wsUserConnectionSuccess: <span class="fstat-no" title="function not covered" >(state) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      state.wsConnected = true;</span>
-<span class="cstat-no" title="statement not covered" >      state.error = undefined;</span>
+    wsUserConnectionSuccess: (state) =&gt; {
+      state.wsConnected = true;
+      state.error = undefined;
     },
-    wsUserConnectionError: <span class="fstat-no" title="function not covered" >(state, action: PayloadAction&lt;string&gt;) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      state.wsConnected = false;</span>
-<span class="cstat-no" title="statement not covered" >      state.error = action.payload;</span>
+    wsUserConnectionError: (state, action: PayloadAction&lt;string&gt;) =&gt; {
+      state.wsConnected = false;
+      state.error = action.payload;
     },
-    wsUserConnectionClosed: <span class="fstat-no" title="function not covered" >(state) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      state.wsConnected = false;</span>
-<span class="cstat-no" title="statement not covered" >      state.error = undefined;</span>
+    wsUserConnectionClosed: (state) =&gt; {
+      state.wsConnected = false;
+      state.error = undefined;
     },
-    wsUserGetMessage: <span class="fstat-no" title="function not covered" >(state, action: PayloadAction&lt;TOrdersData&gt;) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      state.orders = action.payload.orders;</span>
-<span class="cstat-no" title="statement not covered" >      state.total = action.payload.total;</span>
-<span class="cstat-no" title="statement not covered" >      state.totalToday = action.payload.totalToday;</span>
+    wsUserGetMessage: (state, action: PayloadAction&lt;TOrdersData&gt;) =&gt; {
+      state.orders = action.payload.orders;
+      state.total = action.payload.total;
+      state.totalToday = action.payload.totalToday;
     },
-    wsUserConnectionStart: <span class="fstat-no" title="function not covered" >(state, action: PayloadAction&lt;string&gt;) =&gt; state,</span>
-    wsUserConnectionClose: <span class="fstat-no" title="function not covered" >(state) =&gt; state</span>
+    wsUserConnectionStart: (state, action: PayloadAction&lt;string&gt;) =&gt; state,
+    wsUserConnectionClose: (state) =&gt; state
   }
 });
 &nbsp;
@@ -232,7 +232,7 @@ export default userOrdersSlice.reducer;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-29T12:59:08.172Z
+                at 2025-11-29T17:40:12.072Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
