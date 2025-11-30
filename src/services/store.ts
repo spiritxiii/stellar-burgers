@@ -34,7 +34,7 @@ const wsUserMiddleware = socketMiddleware({
   onMessage: 'userOrders/wsUserGetMessage'
 });
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
   ingredients: ingredientsReducer,
   burgerConstructor: constructorReducer,
   user: userReducer,
